@@ -37,6 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework', 
+
+    # project apps
+    'accounts'
 ]
 
 MIDDLEWARE = [
@@ -60,6 +64,8 @@ REST_FRAMEWORK = {
 }
 # END REST CONF
 
+# START AUTH CONF
+AUTH_USER_MODEL = 'accounts.User'
 
 TEMPLATES = [
     {
@@ -86,7 +92,7 @@ WSGI_APPLICATION = 'bs23_s4.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'bs24_s4',
+        'NAME': 'bs23_s4',
         "HOST": "127.0.0.1",
         "PORT": "3306",
         "USER": 'noon',
