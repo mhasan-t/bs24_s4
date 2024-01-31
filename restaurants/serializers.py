@@ -6,4 +6,4 @@ from django.contrib.auth.hashers import make_password
 class RestaurantsSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Restaurant
-        fields = ['name', 'location']
+        fields = ['id', 'name', 'location']
