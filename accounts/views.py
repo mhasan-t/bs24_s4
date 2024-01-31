@@ -27,8 +27,8 @@ class UserDetail(APIView):
     def put(self, request, pk, format=None):
         if not request.user.is_superuser and request.user.id != pk:
             return Response({
-                  "detail": "Unauthorized."
-              }, status=status.HTTP_401_UNAUTHORIZED)
+                "detail": "Unauthorized."
+            }, status=status.HTTP_401_UNAUTHORIZED)
 
         user = self.get_object(pk)
         serializer = UserSerializer(user, data=request.data)
@@ -41,8 +41,8 @@ class UserDetail(APIView):
         user = self.get_object(pk)
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
-  
+
+
 class UserList(APIView, PageNumberPagination):
     def get(self, request):
         users = User.objects.all()
@@ -50,23 +50,21 @@ class UserList(APIView, PageNumberPagination):
 
         serializer = UserSerializer(results, many=True)
         return self.get_paginated_response(serializer.data)
-      
 
     def post(self, request):
         if not request.user.is_superuser:
             return Response({
-                  "detail": "Unauthorized."
-              }, status=status.HTTP_401_UNAUTHORIZED)
+                "detail": "Unauthorized."
+            }, status=status.HTTP_401_UNAUTHORIZED)
 
         try:
-          user = User.objects.get(email__exact=request.data['email'])
-          if user:
-              return Response({
-                  "detail": "User already exists."
-              }, status=status.HTTP_400_BAD_REQUEST)
+            user = User.objects.get(email__exact=request.data['email'])
+            if user:
+                return Response({
+                    "detail": "User already exists."
+                }, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:
-          new = User.objects.create_user(**request.data)
-          serialized_data = UserSerializer(new).data
+            new = User.objects.create_user(**request.data)
+            serialized_data = UserSerializer(new).data
 
-          return Response(serialized_data, status=status.HTTP_201_CREATED)  
-
+            return Response(serialized_data, status=status.HTTP_201_CREATED)
