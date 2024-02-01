@@ -5,16 +5,18 @@ from rest_framework import viewsets, permissions
 from rest_framework.response import Response
 from rest_framework import status
 
-from .models import Restaurant, Menu, OfferedItem
 from accounts.models import User
+
+from .models import Restaurant, Menu, OfferedItem
 from .serializers import RestaurantsSerializer, MenuSerializer, OfferedItemSerializer
-from .permissions import IsRestaurantManager, CanChangeMenu, CanChangeOffer
+from .permissions import IsRestaurantManager, CanChangeMenu, CanChangeOffer, ReadOnly
 
 
 class RestaurantViewSet(viewsets.ModelViewSet):
     queryset = Restaurant.objects.all()
     serializer_class = RestaurantsSerializer
-    permission_classes = [permissions.IsAdminUser, IsRestaurantManager]
+    permission_classes = [permissions.IsAuthenticated,
+                          permissions.IsAdminUser | IsRestaurantManager | ReadOnly]
 
     def create(self, request):
         data = request.data
