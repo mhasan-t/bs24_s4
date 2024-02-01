@@ -14,9 +14,16 @@ votes_detail = views.VotesViewSet.as_view({
     'delete': 'destroy'
 })
 
+standings = views.Results.as_view({
+    "get": "current_standings"
+})
+
 
 urlpatterns = [
     path('', votes_list, name="votes"),
+    path('current_standings/', standings, name="current_standings"),
+
     path('<int:pk>/', votes_detail,
          name="votes-detail"),
+
 ]

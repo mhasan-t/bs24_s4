@@ -20,6 +20,8 @@ class RestaurantsSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class OfferedItemSerializer(serializers.HyperlinkedModelSerializer):
+    menu = MenuSerializer(many=False, read_only=True)
+
     class Meta:
         model = OfferedItem
-        fields = ['id', 'date_offered_on', 'created_at']
+        fields = ['id', 'date_offered_on', 'created_at', "menu"]

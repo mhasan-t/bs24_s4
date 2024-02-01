@@ -36,4 +36,4 @@ class OfferedItem(models.Model):
     REQUIRED_FIELDS = ['date_offered_on']
 
     def __str__(self) -> str:
-        return f'{self.menu.name} - Offered on {self.date_offered_on}'
+        return f'{self.menu.title} - Offered on {self.date_offered_on}'

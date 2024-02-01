@@ -19,5 +19,10 @@ class WinnerSerializer(serializers.HyperlinkedModelSerializer):
     item_id = OfferedItemSerializer(many=False, read_only=True)
 
     class Meta:
-        model = Vote
+        model = Winner
         fields = ['id', 'created_at', 'won_on', 'item_id']
+
+
+class TodaysStandingsSerializer(serializers.Serializer):
+    item = OfferedItemSerializer()
+    vote_count = serializers.IntegerField()
