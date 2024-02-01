@@ -1,3 +1,11 @@
+#Launch Instructions
+
+1. Install Python 3.10
+2. Open terminal and enter `pip install -r requirements.txt`
+3. Enter proper database configuration in settings.py
+4. Run migrations with `python manage.py makemigrations` and `python manage.py migrate`.
+5. Run development server with `python manage.py runserver`
+
 #Entity Relationship Diagram
 ![alt text](ERD.png "ERD")
 
