@@ -1,50 +1,70 @@
 
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, permissions
-from .models import Restaurant, FoodItem, OfferedItem
-from .serializers import RestaurantsSerializer, FoodItemSerializer, OfferedItemSerializer
 
 from rest_framework.response import Response
 from rest_framework import status
+
+from .models import Restaurant, Menu, OfferedItem
+from accounts.models import User
+from .serializers import RestaurantsSerializer, MenuSerializer, OfferedItemSerializer
+from .permissions import IsRestaurantManager, CanChangeMenu, CanChangeOffer
 
 
 class RestaurantViewSet(viewsets.ModelViewSet):
     queryset = Restaurant.objects.all()
     serializer_class = RestaurantsSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAdminUser, IsRestaurantManager]
+
+    def create(self, request):
+        data = request.data
+        manager = get_object_or_404(User, pk=request.data['manager'])
+
+        if manager.user_type == 1:
+            return Response({
+                "details": "Invalid user."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        data['manager'] = manager
+
+        new = Restaurant.objects.create(**data)
+        serializer = RestaurantsSerializer(new)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class FoodItemViewSet(viewsets.ModelViewSet):
-    queryset = FoodItem.objects.all()
-    serializer_class = FoodItemSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+class MenuViewSet(viewsets.ModelViewSet):
+    queryset = Menu.objects.all()
+    serializer_class = MenuSerializer
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly, CanChangeMenu]
 
     def create(self, request, rpk):
         data = request.data
         data['restaurant_id'] = rpk
         get_object_or_404(Restaurant, pk=rpk)
 
-        new = FoodItem.objects.create(**data)
-        serializer = FoodItemSerializer(new)
+        new = Menu.objects.create(**data)
+        serializer = MenuSerializer(new)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def list(self, request, rpk):
         get_object_or_404(Restaurant, pk=rpk)
         data = self.queryset.filter(restaurant_id=rpk)
-        serialized = FoodItemSerializer(data, many=True)
+        serialized = MenuSerializer(data, many=True)
         return Response(serialized.data)
 
 
 class OfferedItemViewSet(viewsets.ModelViewSet):
     queryset = OfferedItem.objects.all()
     serializer_class = OfferedItemSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated, CanChangeOffer]
 
     def create(self, request, menu_pk):
-        food_item = get_object_or_404(FoodItem, pk=menu_pk)
+        menu = get_object_or_404(Menu, pk=menu_pk)
         data = request.data
-        data['food_item'] = food_item
+        data['menu'] = menu
 
         new = OfferedItem.objects.create(**data)
         serializer = OfferedItemSerializer(new)
@@ -52,7 +72,7 @@ class OfferedItemViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def list(self, request, menu_pk):
-        get_object_or_404(FoodItem, pk=menu_pk)
-        data = self.queryset.filter(food_item=menu_pk)
+        get_object_or_404(Menu, pk=menu_pk)
+        data = self.queryset.filter(menu=menu_pk)
         serialized = OfferedItemSerializer(data, many=True)
         return Response(serialized.data)
