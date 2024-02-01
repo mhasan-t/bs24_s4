@@ -5,7 +5,7 @@ from accounts.models import User
 class Restaurant(models.Model):
     name = models.CharField(max_length=255, null=False)
     location = models.CharField(max_length=255)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateField(auto_now_add=True)
 
     manager = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 
@@ -28,7 +28,7 @@ class Menu(models.Model):
 
 class OfferedItem(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    date_offered_on = models.DateTimeField()
+    date_offered_on = models.DateField()
 
     menu = models.ForeignKey(
         Menu, on_delete=models.CASCADE, related_name='offered')

@@ -20,7 +20,7 @@ class WinnerSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Winner
-        fields = ['id', 'created_at', 'won_on', 'item']
+        fields = ['id', 'created_at', 'item']
 
 
 class TodaysStandingsSerializer(serializers.Serializer):

@@ -18,6 +18,10 @@ standings = views.Results.as_view({
     "get": "current_standings"
 })
 
+select_winner = views.WinnerViewSet.as_view({
+    "get": "select_todays_winner"
+})
+
 
 urlpatterns = [
     path('', votes_list, name="votes"),
@@ -25,5 +29,6 @@ urlpatterns = [
 
     path('<int:pk>/', votes_detail,
          name="votes-detail"),
+    path("select_todays_winner/", select_winner, name="select_winner")
 
 ]

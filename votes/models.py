@@ -16,9 +16,8 @@ class Vote(models.Model):
 
 class Winner(models.Model):
     item = models.ForeignKey(OfferedItem, on_delete=models.CASCADE)
-    won_on = created_at = models.DateTimeField(default=datetime.now)
     casted_votes = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
-        return f'Menu [{self.item}] won [{self.won_on} with {self.casted_votes} votes.]'
+        return f'Menu [{self.item}] won with {self.casted_votes} votes.'
