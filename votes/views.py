@@ -25,7 +25,7 @@ class VotesViewSet(viewsets.ModelViewSet):
         item = get_object_or_404(OfferedItem, pk=request.body["item_id"])
 
         data['user_id'] = user
-        data['item_id'] = item
+        data['item'] = item
 
         new = Vote.objects.create(**data)
         serializer = self.serializer_class(new)
@@ -38,16 +38,16 @@ class Results(viewsets.ViewSet):
     serializer_class = VoteSerializer
 
     def current_standings(self, request):
-        votes = Vote.objects.values("item_id_id") \
+        votes = Vote.objects.values("item_id") \
             .annotate(vote_count=models.Count('user_id_id')) \
             .order_by('-vote_count')[:3]
 
-        item_ids = [entry['item_id_id'] for entry in votes]
+        item_ids = [entry['item_id'] for entry in votes]
         items = OfferedItem.objects.filter(id__in=item_ids)
         item_mapping = {item.id: item for item in items}
 
         for entry in votes:
-            entry['item'] = item_mapping[entry['item_id_id']]
+            entry['item'] = item_mapping[entry['item_id']]
 
         serialized = TodaysStandingsSerializer(votes, many=True)
         return Response(serialized.data)
